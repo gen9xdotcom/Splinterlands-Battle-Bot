@@ -1,0 +1,12 @@
+{
+  "accounts": [{
+      "username": "ussername1",
+      "posting_key": "postingkey1",
+      "active_key": "activekey1"
+    }, {
+      "username": "username2",
+      "posting_key": "postingkey2",
+      "active_key": "activekey2"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "name": "splinterlands-battle-bot",
+  "version": "1.0.0",
+  "description": "Splinterlands Battle Bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gen9xdotcom/Splinterlands-Battle-Bot.git"
+  },
+  "keywords": [
+    "splinterlands",
+    "bot",
+    "battle",
+    "auto"
+  ],
+  "author": "gen9x.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gen9xdotcom/Splinterlands-Battle-Bot/issues"
+  },
+  "homepage": "https://github.com/gen9xdotcom/Splinterlands-Battle-Bot#readme",
+  "dependencies": {
+    "@hiveio/dhive": "^1.2.0",
+    "axios": "^0.26.0",
+    "dotenv": "^16.0.0",
+    "md5": "^2.3.0",
+    "moment": "^2.29.1",
+    "ws": "^8.5.0"
+  }
+}

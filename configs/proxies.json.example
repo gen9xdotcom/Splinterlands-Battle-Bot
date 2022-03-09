@@ -1,0 +1,12 @@
+{
+  "proxies": [{
+      "host": "x.x.x.x",
+      "port": "xxxx",
+      "auth": {
+        "username": "usernamehere",
+        "password": "passwordhere"
+      },
+      "cards": []
+    }
+  ]
+}
