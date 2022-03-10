@@ -328,7 +328,7 @@ exports.get_battle_status = async (account, battle_tx, reveal_tx, retry) => {
     await new Promise((resolve) => setTimeout(resolve, 3000));
     return await this.get_battle_status(account, battle_tx, reveal_tx, retry + 1);
   } catch (error) {
-    console.log(`${account.username} CHECK BATTLE STATUS ERROR: `, data);
+    console.log(`${account.username} CHECK BATTLE STATUS ERROR: `, error.message);
     if (error.code == 429) {
       await new Promise((resolve) => setTimeout(resolve, 30000));
     } else {
