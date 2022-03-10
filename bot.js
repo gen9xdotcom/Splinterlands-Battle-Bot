@@ -39,7 +39,7 @@ class Bot {
       return this._account;
     } else {
       this._accounts = this.totalAccounts;
-      return await this.getAccount();
+      return await this.getNextAccount();
     }
   }
 
