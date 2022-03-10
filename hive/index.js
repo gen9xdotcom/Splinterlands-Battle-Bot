@@ -178,7 +178,7 @@ exports.transfer_card = async (account) => {
   try {
     if (parseInt(process.env.TRANSFER_ENABLE, 10) === 1) {
       let cards = account.proxy.cards;
-      if (cards.length == 0) {
+      if (!cards || cards.length == 0) {
         return;
       }
       let uid = cards[0];
