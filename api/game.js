@@ -130,10 +130,6 @@ exports.reveal_team = async (account, signed_tx) => {
   }
 }
 
-exports.claim_quest_if_needed = async (account, quest) => {
-
-}
-
 exports.get_battle_info = async (account, retry, timeout) => {
   if (retry > 120) {
     return null;
@@ -153,7 +149,14 @@ exports.get_battle_info = async (account, retry, timeout) => {
     });
 
     if (data && data !== null && parseInt(data.mana_cap, 10) > 0) {
-      console.log(`${account.username} BATTLE INFO: `, data);
+      console.log(`${account.username} BATTLE INFO: `, {
+        id: data.id,
+        player: data.player,
+        mana_cap: data.mana_cap,
+        ruleset: data.ruleset,
+        inactive: data.inactive,
+        opponent_player: data.opponent_player
+      });
       return data;
     }
     await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -187,7 +190,14 @@ exports.get_current_quest = async (account, timeout) => {
     if (data && data.length > 0) {
 
       let quest = data[0];
-      console.log(`${account.username} CURRENT QUEST: `, quest);
+      console.log(`${account.username} CURRENT QUEST: `, {
+        id: quest.id,
+        player: quest.player,
+        name: quest.name,
+        total_items: quest.total_items,
+        completed_items: quest.completed_items,
+        claim_trx_id: quest.claim_trx_id
+      });
       if (quest.total_items === quest.completed_items && quest.claim_trx_id == null) {
         await Hive.claim_quest(account, quest)
       }
@@ -295,7 +305,11 @@ exports.get_battle_status = async (account, battle_tx, reveal_tx, retry) => {
     });
 
     if (data) {
-      console.log(`${account.username} BATTLE STATUS: `, data);
+      console.log(`${account.username} BATTLE STATUS: `, {
+        id: data.id,
+        player: data.player,
+        status: data.status
+      });
     }
 
     if (data && data.opponent_team_hash && data.opponent_team_hash.length > 0) {

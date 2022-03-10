@@ -17,8 +17,6 @@ exports.start = async () => {
     number_process = accounts.length;
   }
 
-  number_process = 1
-
   for (let index = 0; index < number_process; index++) {
     var subAccounts = [];
     for (let pos = 0; pos < accounts.length; pos++) {

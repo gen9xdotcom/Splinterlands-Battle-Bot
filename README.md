@@ -110,7 +110,7 @@ You can buy proxies from any proxies provider. I recommend you buy proxies at [W
 Create a new file .env and save it in root directory. The content of file is:
 ```bash
 #Private API: return best team for a match
-PRIVATE_API=https://spsbot.fun
+PRIVATE_API=
 
 #Game API
 GAME_API=https://api2.splinterlands.com
