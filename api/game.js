@@ -304,7 +304,6 @@ exports.get_battle_status = async (account, battle_tx, reveal_tx, retry) => {
       httpsAgent: null,
     });
 
-
     if (data) {
       if (data.id && data.status) {
         console.log(`${account.username} BATTLE STATUS: `, {
@@ -316,7 +315,6 @@ exports.get_battle_status = async (account, battle_tx, reveal_tx, retry) => {
         console.log(`${account.username} ${data}`);
         return 1
       }
-
     }
 
     if (data && data.opponent_team_hash && data.opponent_team_hash.length > 0) {
@@ -389,6 +387,20 @@ exports.get_user_ecr = async (account, retry) => {
   }
 }
 
-exports.delegate_hp = async (account) => {
+exports.get_user_balance = async (account) => {
+  try {
+    const {
+      data
+    } = await axios({
+      url: `https://api2.splinterlands.com/players/balances?username=${account.username}`,
+      proxy: account.proxy,
+      httpAgent: null,
+      httpsAgent: null,
+    });
 
+    return data
+  } catch (error) {
+    console.log(error);
+    return []
+  }
 }

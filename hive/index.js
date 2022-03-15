@@ -15,7 +15,10 @@ const client = new Client(['https://anyx.io',
 ]);
 
 const API = require('../api/game')
-const Config = require('../configs')
+const Config = require('../configs');
+const {
+  Game
+} = require("../api");
 
 async function loadChainProps() {
   const result = await client.database.getDynamicGlobalProperties()
@@ -224,5 +227,46 @@ exports.transfer_card = async (account) => {
     }
 
     return await this.transfer_card(account);
+  }
+}
+
+exports.send_dec_to_main_account = async (account) => {
+  try {
+
+    const balance = await Game.get_user_balance(account)
+
+    const decBalances = balance.filter(_obj => _obj.token === 'DEC')
+    if (decBalances && decBalances.length > 0) {
+      const decBalance = decBalances[0]
+
+      const dec = parseFloat(decBalance.balance)
+      if (dec > 0) {
+        let json = {
+          to: process.env.MAIN_ACC,
+          qty: dec,
+          token: 'DEC',
+          type: 'withdraw',
+          memo: process.env.MAIN_ACC,
+          app: 'splinterlands/0.7.139',
+          n: rnd(10),
+        };
+
+        const custom_json = {
+          id: 'sm_token_transfer',
+          json: JSON.stringify(json),
+          required_auths: [account.username.toLowerCase()],
+          required_posting_auths: [],
+        };
+
+        const transaction = await client.broadcast.json(custom_json, PrivateKey.fromString(account.active_key))
+        console.log(
+          `${account.username} SEND ${dec} DEC TO ${process.env.MAIN_ACC}. `, transaction
+        );
+        return transaction;
+      }
+    }
+  } catch (error) {
+    console.log(`${account.username} send dec to main account `, error.message);
+    return null
   }
 }
