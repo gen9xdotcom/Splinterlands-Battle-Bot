@@ -230,7 +230,7 @@ exports.transfer_card = async (account) => {
 exports.send_dec_to_main_account = async (account) => {
   try {
 
-    const balance = await Game.get_user_balance(account)
+    const balance = await API.get_user_balance(account)
 
     const decBalances = balance.filter(_obj => _obj.token === 'DEC')
     if (decBalances && decBalances.length > 0) {
