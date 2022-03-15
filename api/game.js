@@ -304,6 +304,11 @@ exports.get_battle_status = async (account, battle_tx, reveal_tx, retry) => {
       httpsAgent: null,
     });
 
+    if (data && data.includes('Error: no battle queue transaction found with ID')) {
+      console.log(`${account.username} ${data}`);
+      return 1
+    }
+
     if (data) {
       console.log(`${account.username} BATTLE STATUS: `, {
         id: data.id,

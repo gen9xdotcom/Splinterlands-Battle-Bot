@@ -83,7 +83,13 @@ class Bot {
             const battle_tx = submit_data.id;
             if (battle_tx) {
               return await API.Game.get_battle_status(account, trx_id, submit_data.reveal_tx, 0)
-                .then(() => this.battle(account, cards, current_ecr * 0.99))
+                .then((status) => {
+                  if (status == 1) {
+                    return await this.start()
+                  } else {
+                    this.battle(account, cards, current_ecr * 0.99)
+                  }
+                })
             }
           }
         }
