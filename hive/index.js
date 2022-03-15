@@ -16,9 +16,6 @@ const client = new Client(['https://anyx.io',
 
 const API = require('../api/game')
 const Config = require('../configs');
-const {
-  Game
-} = require("../api");
 
 async function loadChainProps() {
   const result = await client.database.getDynamicGlobalProperties()
