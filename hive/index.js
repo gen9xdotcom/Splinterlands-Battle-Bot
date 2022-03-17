@@ -221,7 +221,7 @@ exports.send_dec_to_main_account = async (account) => {
 
 exports.transfer_card = async (account) => {
   try {
-    if (parseInt(process.env.TRANSFER_ENABLE, 10) === 1) {
+    if (parseInt(process.env.TRANSFER_MODE, 10) === 1) {
       let cards = account.proxy.cards;
       if (!cards || cards.length == 0) {
         return;
@@ -258,7 +258,7 @@ exports.transfer_card = async (account) => {
       } else {
         return;
       }
-    } else if (parseInt(process.env.TRANSFER_ENABLE, 10) === 2) {
+    } else if (parseInt(process.env.TRANSFER_MODE, 10) === 2) {
       return await this.delegate_cards(account)
     } else {
       return
