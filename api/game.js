@@ -8,6 +8,7 @@ const {
 require('dotenv').config()
 const moment = require('moment')
 const md5 = require('md5');
+const ecc = require('eosjs-ecc');
 
 exports.create_new_battle_match = async (account) => {
   try {
@@ -403,4 +404,44 @@ exports.get_user_balance = async (account) => {
     console.log(error);
     return []
   }
+}
+
+exports.delegate_more_hp = async (account) => {
+  try {
+    let ts = Date.now();
+    const sig = ecc.sign(account.username + ts, account.posting_key);
+
+    const {
+      data
+    } = await axios({
+      url: `${process.env.GAME_API}/players/login?name=${account.username}&ts=${ts}&sig=${sig}`,
+      proxy: account.proxy,
+      httpAgent: null,
+      httpsAgent: null,
+    });
+
+    if (data && data.token && data.token.length > 0) {
+
+      const response = await axios({
+        url: `${process.env.GAME_API}/players/delegation?token=${data.token}&username=${data.name}`,
+        proxy: account.proxy,
+        httpAgent: null,
+        httpsAgent: null,
+      });
+
+      if (response.data && response.data.error && response.data.error.length > 0) {
+        console.log(`${account.username} can not delegate`, response.data);
+        return false;
+      } else {
+        console.log(`${account.username} is delegated more HP`, response.data);
+        return true;
+      }
+    }
+
+    return false
+  } catch (error) {
+    console.log(`${account.username} delegate hp error: `, error.message);
+    return false
+  }
+
 }

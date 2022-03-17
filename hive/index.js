@@ -276,7 +276,7 @@ exports.transfer_card = async (account) => {
   }
 }
 
-exports.delegate_cards = async (account) => {
+exports.delegate_cards = async (account, delegate_hp_first) => {
   try {
     let cards = account.proxy.cards;
     if (!cards || cards.length == 0) {
@@ -290,6 +290,10 @@ exports.delegate_cards = async (account) => {
       const holder = await Config.find_holder(findCard.player);
       if (holder == null || (holder != null && holder.username == account.username)) {
         return;
+      }
+
+      if (delegate_hp_first) {
+        await API.delegate_more_hp(holder)
       }
 
       if (findCard.delegated_to && findCard.delegated_to != null && findCard.delegated_to.length > 0) {
@@ -321,17 +325,24 @@ exports.delegate_cards = async (account) => {
     console.log(`${account.username} delegate card error: `, error.message);
     if (error.message.includes('Please wait to transact, or power up HIVE')) {
       console.log(`${account.username} do not have enough RC `, error.message);
-      return
+      if (delegate_hp_first) {
+        return
+      }
+      return await this.delegate_cards(account, true);
     } else {
       return await this.delegate_cards(account);
     }
   }
 }
 
-exports.undelegate_cards = async (account, cards) => {
+exports.undelegate_cards = async (account, cards, delegate_hp_first) => {
   try {
     if (cards.length == 0) {
       return
+    }
+
+    if (delegate_hp_first) {
+      await API.delegate_more_hp(account)
     }
 
     let json = {
@@ -355,7 +366,10 @@ exports.undelegate_cards = async (account, cards) => {
     console.log(`${account.username} undelegate card error: `, error.message);
     if (error.message.includes('Please wait to transact, or power up HIVE')) {
       console.log(`${account.username} do not have enough RC `, error.message);
-      return
+      if (delegate_hp_first) {
+        return
+      }
+      return await this.undelegate_cards(account, cards, true);
     } else {
       return await this.undelegate_cards(account, cards);
     }
