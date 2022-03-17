@@ -28,7 +28,7 @@ exports.get_enemy_team = async (account, enemy) => {
 
           if (enemy_team_json && enemy_team_json.summoner && enemy_team_json.monsters) {
             ws.close()
-            console.log(`${account.username} COUNTER ENEMY TEAM: `, enemy_team_json);
+            // console.log(`${account.username} COUNTER ENEMY TEAM: `, enemy_team_json);
             resolve(enemy_team)
           } else {
             setTimeout(() => {
@@ -43,7 +43,7 @@ exports.get_enemy_team = async (account, enemy) => {
 
           ws.close()
           if (enemy_team_json && enemy_team_json.summoner && enemy_team_json.monsters) {
-            console.log(`${account.username} COUNTER ENEMY TEAM: `, enemy_team_json);
+            // console.log(`${account.username} COUNTER ENEMY TEAM: `, enemy_team_json);
             resolve(enemy_team)
           }
           resolve(null)

@@ -29,7 +29,7 @@ exports.get_best_team = async (account, battle, quest, cards, enemy_team, retry)
       data
     } = await axios.post(`${process.env.PRIVATE_API}/v1/bot`, postData);
 
-    console.log(`${account.username} GET TEAM DATA: `, data);
+    // console.log(`${account.username} GET TEAM DATA: `, data);
     return data
 
   } catch (error) {

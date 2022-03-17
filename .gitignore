@@ -106,4 +106,5 @@ dist
 package-lock.json
 
 configs/accounts.json
+configs/holders.json
 configs/proxies.json

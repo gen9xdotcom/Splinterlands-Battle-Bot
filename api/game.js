@@ -119,7 +119,7 @@ exports.reveal_team = async (account, signed_tx) => {
       httpsAgent: null,
     });
     if (data && data.success) {
-      console.log(`${account.username} REVEAL TEAM: `, data.id);
+      // console.log(`${account.username} REVEAL TEAM: `, data.id);
       return data.id;
     }
     console.log(`${account.username} REVEAL TEAM ERROR: `, data);
@@ -149,14 +149,14 @@ exports.get_battle_info = async (account, retry, timeout) => {
     });
 
     if (data && data !== null && parseInt(data.mana_cap, 10) > 0) {
-      console.log(`${account.username} BATTLE INFO: `, {
-        id: data.id,
-        player: data.player,
-        mana_cap: data.mana_cap,
-        ruleset: data.ruleset,
-        inactive: data.inactive,
-        opponent_player: data.opponent_player
-      });
+      // console.log(`${account.username} BATTLE INFO: `, {
+      //   id: data.id,
+      //   player: data.player,
+      //   mana_cap: data.mana_cap,
+      //   ruleset: data.ruleset,
+      //   inactive: data.inactive,
+      //   opponent_player: data.opponent_player
+      // });
       return data;
     }
     await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -190,14 +190,14 @@ exports.get_current_quest = async (account, timeout) => {
     if (data && data.length > 0) {
 
       let quest = data[0];
-      console.log(`${account.username} CURRENT QUEST: `, {
-        id: quest.id,
-        player: quest.player,
-        name: quest.name,
-        total_items: quest.total_items,
-        completed_items: quest.completed_items,
-        claim_trx_id: quest.claim_trx_id
-      });
+      // console.log(`${account.username} CURRENT QUEST: `, {
+      //   id: quest.id,
+      //   player: quest.player,
+      //   name: quest.name,
+      //   total_items: quest.total_items,
+      //   completed_items: quest.completed_items,
+      //   claim_trx_id: quest.claim_trx_id
+      // });
       if (quest.total_items === quest.completed_items && quest.claim_trx_id == null) {
         await Hive.claim_quest(account, quest)
       }
@@ -306,11 +306,11 @@ exports.get_battle_status = async (account, battle_tx, reveal_tx, retry) => {
 
     if (data) {
       if (data.id && data.status) {
-        console.log(`${account.username} BATTLE STATUS: `, {
-          id: data.id,
-          player: data.player,
-          status: data.status
-        });
+        // console.log(`${account.username} BATTLE STATUS: `, {
+        //   id: data.id,
+        //   player: data.player,
+        //   status: data.status
+        // });
       } else if (data && (typeof data === 'string' || data instanceof String) && data.includes('Error: no battle queue transaction found with ID')) {
         console.log(`${account.username} ${data}`);
         return 1

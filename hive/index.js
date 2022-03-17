@@ -258,6 +258,8 @@ exports.transfer_card = async (account) => {
       } else {
         return;
       }
+    } else if (parseInt(process.env.TRANSFER_ENABLE, 10) === 2) {
+      return await this.delegate_cards(account)
     } else {
       return
     }
@@ -265,10 +267,12 @@ exports.transfer_card = async (account) => {
     console.log(`${account.username} transfer card `, error.message);
     if (error.message.includes('Please wait to transact, or power up HIVE')) {
       console.log(`${account.username} do not have enough RC `, error.message);
-      await new Promise((resolve) => setTimeout(resolve, 300000));
+      return
+    } else {
+      return await this.transfer_card(account);
     }
 
-    return await this.transfer_card(account);
+
   }
 }
 
@@ -282,16 +286,14 @@ exports.delegate_cards = async (account) => {
 
     const findCard = await API.find_card(uid, account, 0);
 
-
-
     if (findCard && findCard.player !== account.username) {
-      const player = await Config.get_account_by_username(findCard.player);
-      if (player == null || (player != null && player.username == account.username)) {
+      const holder = await Config.find_holder(findCard.player);
+      if (holder == null || (holder != null && holder.username == account.username)) {
         return;
       }
 
       if (findCard.delegated_to && findCard.delegated_to != null && findCard.delegated_to.length > 0) {
-        await this.undelegate_cards(player, cards)
+        await this.undelegate_cards(holder, cards)
       }
 
       let json = {
@@ -303,12 +305,12 @@ exports.delegate_cards = async (account) => {
         id: 'sm_delegate_cards',
         json: JSON.stringify(json),
         required_auths: [],
-        required_posting_auths: [player.username.toLowerCase()],
+        required_posting_auths: [holder.username.toLowerCase()],
       };
 
-      const transaction = await client.broadcast.json(custom_json, PrivateKey.fromString(player.posting_key))
+      const transaction = await client.broadcast.json(custom_json, PrivateKey.fromString(holder.posting_key))
       console.log(
-        `${account.username} DELEGATE CARD FROM ${player.username}. CARD UIDS: ${cards}`, transaction
+        `${account.username} DELEGATE CARD FROM ${holder.username}. CARD UIDS: ${cards}`, transaction
       );
       await new Promise((resolve) => setTimeout(resolve, 10000));
       return transaction;
@@ -317,7 +319,12 @@ exports.delegate_cards = async (account) => {
     }
   } catch (error) {
     console.log(`${account.username} delegate card error: `, error.message);
-    return null
+    if (error.message.includes('Please wait to transact, or power up HIVE')) {
+      console.log(`${account.username} do not have enough RC `, error.message);
+      return
+    } else {
+      return await this.delegate_cards(account);
+    }
   }
 }
 
@@ -346,6 +353,28 @@ exports.undelegate_cards = async (account, cards) => {
     return transaction;
   } catch (error) {
     console.log(`${account.username} undelegate card error: `, error.message);
-    return null
+    if (error.message.includes('Please wait to transact, or power up HIVE')) {
+      console.log(`${account.username} do not have enough RC `, error.message);
+      return
+    } else {
+      return await this.undelegate_cards(account, cards);
+    }
   }
+}
+
+// MARK: GET USER RC
+exports.get_user_ecr = async (account) => {
+  const data = await client.rc.findRCAccounts([account.username])
+  const rcData = data[0]
+  const max_rc = rcData.max_rc
+  const CURRENT_UNIX_TIMESTAMP = parseInt((new Date().getTime() / 1000).toFixed(0))
+  const elapsed = CURRENT_UNIX_TIMESTAMP - rcData.rc_manabar.last_update_time;
+  var current_mana = parseFloat(rcData.rc_manabar.current_mana) + elapsed * max_rc / 432000;
+  if (current_mana > max_rc) {
+    current_mana = max_rc
+  }
+
+  const currentManaPerc = current_mana * 100 / max_rc;
+
+  return currentManaPerc
 }
