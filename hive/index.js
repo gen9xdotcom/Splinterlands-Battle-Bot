@@ -1,6 +1,5 @@
 const {
   Client,
-  Signature,
   PrivateKey
 } = require("@hiveio/dhive");
 const {
@@ -174,6 +173,52 @@ exports.start_quest = async (account) => {
   }
 }
 
+exports.send_dec_to_main_account = async (account) => {
+  try {
+
+    const main_acc = process.env.MAIN_ACC
+    if (main_acc && main_acc.length > 0) {
+      const balance = await API.get_user_balance(account)
+
+      const decBalances = balance.filter(_obj => _obj.token === 'DEC')
+      if (decBalances && decBalances.length > 0) {
+        const decBalance = decBalances[0]
+
+        const dec = parseFloat(decBalance.balance)
+        if (dec > 0) {
+          let json = {
+            to: process.env.MAIN_ACC,
+            qty: dec,
+            token: 'DEC',
+            type: 'withdraw',
+            memo: process.env.MAIN_ACC,
+            app: 'splinterlands/0.7.139',
+            n: rnd(10),
+          };
+
+          const custom_json = {
+            id: 'sm_token_transfer',
+            json: JSON.stringify(json),
+            required_auths: [account.username.toLowerCase()],
+            required_posting_auths: [],
+          };
+
+          const transaction = await client.broadcast.json(custom_json, PrivateKey.fromString(account.active_key))
+          console.log(
+            `${account.username} SEND ${dec} DEC TO ${process.env.MAIN_ACC}. `, transaction
+          );
+          return transaction;
+        }
+      }
+    }
+
+    return null
+  } catch (error) {
+    console.log(`${account.username} send dec to main account `, error.message);
+    return null
+  }
+}
+
 exports.transfer_card = async (account) => {
   try {
     if (parseInt(process.env.TRANSFER_ENABLE, 10) === 1) {
@@ -227,49 +272,80 @@ exports.transfer_card = async (account) => {
   }
 }
 
-exports.send_dec_to_main_account = async (account) => {
+exports.delegate_cards = async (account) => {
   try {
+    let cards = account.proxy.cards;
+    if (!cards || cards.length == 0) {
+      return;
+    }
+    let uid = cards[0];
 
-    const main_acc = process.env.MAIN_ACC
-    if (main_acc && main_acc.length > 0) {
-      const balance = await API.get_user_balance(account)
+    const findCard = await API.find_card(uid, account, 0);
 
-      const decBalances = balance.filter(_obj => _obj.token === 'DEC')
-      if (decBalances && decBalances.length > 0) {
-        const decBalance = decBalances[0]
 
-        const dec = parseFloat(decBalance.balance)
-        if (dec > 0) {
-          let json = {
-            to: process.env.MAIN_ACC,
-            qty: dec,
-            token: 'DEC',
-            type: 'withdraw',
-            memo: process.env.MAIN_ACC,
-            app: 'splinterlands/0.7.139',
-            n: rnd(10),
-          };
 
-          const custom_json = {
-            id: 'sm_token_transfer',
-            json: JSON.stringify(json),
-            required_auths: [account.username.toLowerCase()],
-            required_posting_auths: [],
-          };
-
-          const transaction = await client.broadcast.json(custom_json, PrivateKey.fromString(account.active_key))
-          console.log(
-            `${account.username} SEND ${dec} DEC TO ${process.env.MAIN_ACC}. `, transaction
-          );
-          return transaction;
-        }
+    if (findCard && findCard.player !== account.username) {
+      const player = await Config.get_account_by_username(findCard.player);
+      if (player == null || (player != null && player.username == account.username)) {
+        return;
       }
+
+      if (findCard.delegated_to && findCard.delegated_to != null && findCard.delegated_to.length > 0) {
+        await this.undelegate_cards(player, cards)
+      }
+
+      let json = {
+        to: account.username,
+        cards: cards,
+      };
+
+      const custom_json = {
+        id: 'sm_delegate_cards',
+        json: JSON.stringify(json),
+        required_auths: [],
+        required_posting_auths: [player.username.toLowerCase()],
+      };
+
+      const transaction = await client.broadcast.json(custom_json, PrivateKey.fromString(player.posting_key))
+      console.log(
+        `${account.username} DELEGATE CARD FROM ${player.username}. CARD UIDS: ${cards}`, transaction
+      );
+      await new Promise((resolve) => setTimeout(resolve, 10000));
+      return transaction;
+    } else {
+      return;
+    }
+  } catch (error) {
+    console.log(`${account.username} delegate card error: `, error.message);
+    return null
+  }
+}
+
+exports.undelegate_cards = async (account, cards) => {
+  try {
+    if (cards.length == 0) {
+      return
     }
 
-    return null
+    let json = {
+      cards: cards,
+    };
 
+    const custom_json = {
+      id: 'sm_undelegate_cards',
+      json: JSON.stringify(json),
+      required_auths: [],
+      required_posting_auths: [account.username.toLowerCase()],
+    };
+
+    const transaction = await client.broadcast.json(custom_json, PrivateKey.fromString(account.posting_key))
+    console.log(
+      `${account.username} UNDELEGATE CARD UIDS: ${cards}`, transaction
+    );
+    await new Promise((resolve) => setTimeout(resolve, 10000));
+    return transaction;
   } catch (error) {
-    console.log(`${account.username} send dec to main account `, error.message);
+    console.log(`${account.username} undelegate card error: `, error.message);
     return null
   }
 }
