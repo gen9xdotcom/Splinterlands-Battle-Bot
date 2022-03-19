@@ -132,7 +132,7 @@ exports.reveal_team = async (account, signed_tx) => {
 }
 
 exports.get_battle_info = async (account, retry, timeout) => {
-  if (retry > 35) {
+  if (retry > 30) {
     return null;
   }
   try {
@@ -160,7 +160,7 @@ exports.get_battle_info = async (account, retry, timeout) => {
       // });
       return data;
     }
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 5000));
     return await this.get_battle_info(account, retry + 1, timeout);
   } catch (error) {
     console.log(`${account.username} GET BATTLE INFO ERROR: `, error.message, account.proxy);
