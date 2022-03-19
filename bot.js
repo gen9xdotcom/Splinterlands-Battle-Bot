@@ -51,7 +51,7 @@ class Bot {
     if (ecr < parseInt(process.env.START_ECR, 10)) {
       return await this.start()
     } else {
-      console.log('START: ', account.username);
+      // console.log('START: ', account.username);
       const cards = await API.Game.get_playable_cards(account, 4000, 0)
       return await Hive.transfer_card(account).then(() => this.battle(account, cards, ecr))
     }
@@ -67,7 +67,7 @@ class Bot {
       return await Hive.send_dec_to_main_account(account).then(() => this.start())
     } else {
 
-      console.log('BATTLE: ', account.username);
+      // console.log('BATTLE: ', account.username);
       const trx_id = await API.Game.create_new_battle_match(account)
       if (trx_id) {
         const quest = await API.Game.get_current_quest(account)
