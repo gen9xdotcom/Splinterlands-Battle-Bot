@@ -290,7 +290,8 @@ exports.find_card = async (uid, account, retry) => {
 };
 
 exports.get_battle_status = async (account, battle_tx, reveal_tx, retry) => {
-  if (retry > 60) {
+  if (retry > 40) {
+    await this.reveal_team(account, reveal_tx);
     return 1;
   }
 
@@ -307,11 +308,12 @@ exports.get_battle_status = async (account, battle_tx, reveal_tx, retry) => {
 
     if (data) {
       if (data.id && data.status) {
-        // console.log(`${account.username} BATTLE STATUS: `, {
-        //   id: data.id,
-        //   player: data.player,
-        //   status: data.status
-        // });
+        console.log(`${account.username} BATTLE STATUS: `, {
+          id: data.id,
+          player: data.player,
+          status: data.status,
+          opponent_player: data.opponent_player
+        });
       } else if (data && (typeof data === 'string' || data instanceof String) && data.includes('Error: no battle queue transaction found with ID')) {
         console.log(`${account.username} ${data}`);
         return 1
@@ -334,7 +336,7 @@ exports.get_battle_status = async (account, battle_tx, reveal_tx, retry) => {
     await new Promise((resolve) => setTimeout(resolve, 3000));
     return await this.get_battle_status(account, battle_tx, reveal_tx, retry + 1);
   } catch (error) {
-    console.log(`${account.username} CHECK BATTLE STATUS ERROR: `, error.message);
+    console.log(`${account.username} CHECK BATTLE STATUS ERROR: `, error.message, account.proxy);
     if (error.code == 429) {
       await new Promise((resolve) => setTimeout(resolve, 30000));
     } else {
