@@ -68,12 +68,15 @@ class Bot {
     } else {
 
       // console.log('BATTLE: ', account.username);
-      const trx_id = await API.Game.create_new_battle_match(account)
+      var trx_id = await API.Game.create_new_battle_match(account)
       if (trx_id) {
         const quest = await API.Game.get_current_quest(account)
         const battle = await API.Game.get_battle_info(account, 0, 0)
 
         if (battle) {
+          if (battle.id !== trx_id) {
+            trx_id = battle.id
+          }
           const enemy_team = await WS.get_enemy_team(account, battle.opponent_player)
 
           const team = await API.Private.get_best_team(account, battle, quest, cards, enemy_team, 0)
