@@ -291,7 +291,7 @@ exports.find_card = async (uid, account, retry) => {
 
 exports.get_battle_status = async (account, battle_tx, reveal_tx, retry) => {
   if (retry > 60) {
-    return 2;
+    return 1;
   }
 
   try {
