@@ -80,17 +80,22 @@ class Bot {
 
           if (team) {
             const submit_data = await API.Game.submit_team(account, trx_id, team)
-            const battle_tx = submit_data.id;
-            if (battle_tx) {
-              return await API.Game.get_battle_status(account, trx_id, submit_data.reveal_tx, 0)
-                .then(async (status) => {
-                  if (status == 1) {
-                    return await Hive.send_dec_to_main_account(account).then(() => this.start())
-                  } else {
-                    return await this.battle(account, cards, current_ecr * 0.99)
-                  }
-                })
+            if (submit_data && submit_data.id) {
+              const battle_tx = submit_data.id;
+              if (battle_tx) {
+                return await API.Game.get_battle_status(account, trx_id, submit_data.reveal_tx, 0)
+                  .then(async (status) => {
+                    if (status == 1) {
+                      return await Hive.send_dec_to_main_account(account).then(() => this.start())
+                    } else {
+                      return await this.battle(account, cards, current_ecr * 0.99)
+                    }
+                  })
+              }
+            } else {
+              return await Hive.send_dec_to_main_account(account).then(() => this.start())
             }
+
           }
         }
       }
