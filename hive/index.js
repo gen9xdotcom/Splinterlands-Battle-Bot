@@ -143,7 +143,7 @@ exports.claim_quest = async (account, quest) => {
     };
 
     const transaction = await client.broadcast.json(custom_json, PrivateKey.fromString(account.posting_key))
-    console.log(`${account.username} CLAIM QUEST`, transaction);
+    // console.log(`${account.username} CLAIM QUEST`, transaction);
     return transaction
   } catch (error) {
     console.log(`${account.username} CLAIM QUEST ERROR`, error.message);
@@ -166,7 +166,7 @@ exports.start_quest = async (account) => {
     };
 
     const transaction = await client.broadcast.json(custom_json, PrivateKey.fromString(account.posting_key))
-    console.log(`${account.username} START QUEST`, transaction);
+    // console.log(`${account.username} START QUEST`, transaction);
     return transaction
   } catch (error) {
     console.log(`${account.username} START QUEST ERROR`, error.message);
@@ -214,7 +214,7 @@ exports.send_dec_to_main_account = async (account) => {
 
     return null
   } catch (error) {
-    console.log(`${account.username} send dec to main account `, error.message);
+    // console.log(`${account.username} send dec to main account `, error.message);
     return null
   }
 }

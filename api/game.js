@@ -29,7 +29,7 @@ exports.create_new_battle_match = async (account) => {
     });
 
     if (data && data.success) {
-      console.log(`${account.username} FIND MATCH: `, data.id);
+      // console.log(`${account.username} FIND MATCH: `, data.id);
       return data.id;
     }
 
@@ -92,7 +92,7 @@ exports.submit_team = async (account, trx_id, team) => {
     });
 
     if (data && data.success) {
-      console.log(`${account.username} SUBMIT TEAM: `, data.id);
+      // console.log(`${account.username} SUBMIT TEAM: `, data.id);
       return {
         id: data.id,
         reveal_tx: reveal_signed_tx,
@@ -123,7 +123,7 @@ exports.reveal_team = async (account, signed_tx) => {
       // console.log(`${account.username} REVEAL TEAM: `, data.id);
       return data.id;
     }
-    console.log(`${account.username} REVEAL TEAM ERROR: `, data);
+    // console.log(`${account.username} REVEAL TEAM ERROR: `, data);
     return null;
   } catch (error) {
     console.log(`${account.username} REVEAL TEAM ERROR: `, error.message);
@@ -313,12 +313,12 @@ exports.get_battle_status = async (account, battle_tx, reveal_tx, retry) => {
 
     if (data) {
       if (data.id && data.status) {
-        console.log(`${account.username} BATTLE STATUS: `, {
-          id: data.id,
-          player: data.player,
-          status: data.status,
-          opponent_player: data.opponent_player
-        });
+        // console.log(`${account.username} BATTLE STATUS: `, {
+        //   id: data.id,
+        //   player: data.player,
+        //   status: data.status,
+        //   opponent_player: data.opponent_player
+        // });
       } else if (data && (typeof data === 'string' || data instanceof String) && data.includes('Error: no battle queue transaction found with ID')) {
         console.log(`${account.username} ${data}`);
         return 1
@@ -378,7 +378,7 @@ exports.get_user_ecr = async (account, retry) => {
 
       let newEcr = (parseFloat(ecrToken.balance) + hours * 1.04 * 100) / 100;
       let ecr = Math.min(newEcr, 100);
-      console.log(`${account.username} GET ECR: ${ecr}%`);
+      // console.log(`${account.username} GET ECR: ${ecr}%`);
       return ecr;
     } else {
       return 70;
