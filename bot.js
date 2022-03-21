@@ -49,7 +49,7 @@ class Bot {
     const ecr = await API.Game.get_user_ecr(account, 0)
 
     if (ecr < parseInt(process.env.START_ECR, 10)) {
-      return await this.start()
+      return await Hive.send_dec_to_main_account(account).then(() => this.start())
     } else {
       // console.log('START: ', account.username);
       const cards = await API.Game.get_playable_cards(account, 4000, 0)
@@ -104,7 +104,7 @@ class Bot {
       }
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 10000));
+    await new Promise((resolve) => setTimeout(resolve, 5000));
     return await this.battle(account, cards, current_ecr)
   }
 
