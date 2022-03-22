@@ -251,7 +251,7 @@ exports.transfer_card = async (account) => {
 
         const transaction = await client.broadcast.json(custom_json, PrivateKey.fromString(player.active_key))
         console.log(
-          `${account.username} TRANSFER CARD FROM ${player.username}. CARD UIDS: ${cards}`, transaction
+          `${account.username} GET CARD TRANSFER FROM ${player.username}. CARD UIDS: ${cards}`, transaction
         );
         return transaction;
       } else {

@@ -165,9 +165,9 @@ exports.get_battle_info = async (account, retry, timeout) => {
   } catch (error) {
     console.log(`${account.username} GET BATTLE INFO ERROR: `, error.message, account.proxy);
     if (error.code == 429) {
-      await new Promise((resolve) => setTimeout(resolve, 60000));
+      await new Promise((resolve) => setTimeout(resolve, 30000));
     } else {
-      await new Promise((resolve) => setTimeout(resolve, 5000));
+      await new Promise((resolve) => setTimeout(resolve, 10000));
     }
 
     return await this.get_battle_info(account, retry + 1, timeout);
@@ -352,7 +352,7 @@ exports.get_battle_status = async (account, battle_tx, reveal_tx, retry) => {
 }
 
 exports.get_user_ecr = async (account, retry) => {
-  if (retry > 10) {
+  if (retry > 3) {
     return 80;
   }
 
@@ -408,7 +408,7 @@ exports.get_user_balance = async (account) => {
 
     return data
   } catch (error) {
-    console.log(error);
+    console.log(`${account.username} GET USER BALANCE ERROR: `, error.message, account.proxy);
     return []
   }
 }
