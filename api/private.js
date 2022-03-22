@@ -5,7 +5,7 @@ require('dotenv').config()
 
 exports.get_best_team = async (account, battle, quest, cards, enemy_team, retry) => {
 
-  if (retry > 20) {
+  if (retry > 10) {
     return null
   }
 
@@ -34,7 +34,7 @@ exports.get_best_team = async (account, battle, quest, cards, enemy_team, retry)
 
   } catch (error) {
     console.log(`${account.username} GET TEAM DATA ERROR: `, error.message);
-    await new Promise((resolve) => setTimeout(resolve, 10000));
+    await new Promise((resolve) => setTimeout(resolve, 5000));
     return await this.get_best_team(account, battle, quest, cards, enemy_team, retry + 1)
   }
 }

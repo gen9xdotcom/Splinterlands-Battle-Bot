@@ -34,7 +34,7 @@ exports.get_enemy_team = async (account, enemy) => {
             setTimeout(() => {
               ws.close()
               resolve(null)
-            }, 10000)
+            }, 5000)
 
           }
         } else if (trx_info && trx_info.type && trx_info.type == 'team_reveal') {
@@ -54,7 +54,7 @@ exports.get_enemy_team = async (account, enemy) => {
     setTimeout(() => {
       ws.close()
       resolve(null)
-    }, 150000)
+    }, 120000)
 
   });
 

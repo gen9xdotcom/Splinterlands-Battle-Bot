@@ -253,7 +253,6 @@ exports.transfer_card = async (account) => {
         console.log(
           `${account.username} TRANSFER CARD FROM ${player.username}. CARD UIDS: ${cards}`, transaction
         );
-        await new Promise((resolve) => setTimeout(resolve, 10000));
         return transaction;
       } else {
         return;
@@ -316,7 +315,6 @@ exports.delegate_cards = async (account, delegate_hp_first) => {
       console.log(
         `${account.username} DELEGATE CARD FROM ${holder.username}. CARD UIDS: ${cards}`, transaction
       );
-      await new Promise((resolve) => setTimeout(resolve, 10000));
       return transaction;
     } else {
       return;
@@ -360,7 +358,6 @@ exports.undelegate_cards = async (account, cards, delegate_hp_first) => {
     console.log(
       `${account.username} UNDELEGATE CARD UIDS: ${cards}`, transaction
     );
-    await new Promise((resolve) => setTimeout(resolve, 10000));
     return transaction;
   } catch (error) {
     console.log(`${account.username} undelegate card error: `, error.message);
