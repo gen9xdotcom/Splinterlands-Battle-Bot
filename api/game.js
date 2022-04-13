@@ -9,6 +9,14 @@ require('dotenv').config()
 const moment = require('moment')
 const md5 = require('md5');
 const ecc = require('eosjs-ecc');
+const https = require('https');
+
+const baseUrls = [
+  "https://api2.splinterlands.com",
+  "https://api.splinterlands.io",
+  "https://game-api.splinterlands.io",
+  "https://cache-api.splinterlands.com"
+]
 
 exports.create_new_battle_match = async (account) => {
   try {
@@ -25,7 +33,10 @@ exports.create_new_battle_match = async (account) => {
       }),
       proxy: account.proxy,
       httpAgent: null,
-      httpsAgent: null,
+      httpsAgent: new https.Agent({
+        keepAlive: true,
+        maxSockets: Infinity
+      }),
     });
 
     if (data && data.success) {
@@ -88,7 +99,10 @@ exports.submit_team = async (account, trx_id, team) => {
       }),
       proxy: account.proxy,
       httpAgent: null,
-      httpsAgent: null,
+      httpsAgent: new https.Agent({
+        keepAlive: true,
+        maxSockets: Infinity,
+      }),
     });
 
     if (data && data.success) {
@@ -117,7 +131,10 @@ exports.reveal_team = async (account, signed_tx) => {
       }),
       proxy: account.proxy,
       httpAgent: null,
-      httpsAgent: null,
+      httpsAgent: new https.Agent({
+        keepAlive: true,
+        maxSockets: Infinity,
+      }),
     });
     if (data && data.success) {
       // console.log(`${account.username} REVEAL TEAM: `, data.id);
@@ -140,13 +157,18 @@ exports.get_battle_info = async (account, retry, timeout) => {
       await new Promise((resolve) => setTimeout(resolve, timeout));
     }
 
+
+
     const {
       data
     } = await axios({
-      url: `${process.env.GAME_API}/players/outstanding_match?username=${account.username}`,
+      url: `${baseUrls[Math.floor(Math.random() * baseUrls.length)]}/players/outstanding_match?username=${account.username}`,
       proxy: account.proxy,
       httpAgent: null,
-      httpsAgent: null,
+      httpsAgent: new https.Agent({
+        keepAlive: true,
+        maxSockets: Infinity,
+      }),
     });
 
     if (data && data !== null && parseInt(data.mana_cap, 10) > 0) {
@@ -187,10 +209,13 @@ exports.get_current_quest = async (account, timeout) => {
     const {
       data
     } = await axios({
-      url: `${process.env.GAME_API}/players/quests?username=${account.username}`,
+      url: `${baseUrls[Math.floor(Math.random() * baseUrls.length)]}/players/quests?username=${account.username}`,
       proxy: account.proxy,
       httpAgent: null,
-      httpsAgent: null,
+      httpsAgent: new https.Agent({
+        keepAlive: true,
+        maxSockets: Infinity,
+      }),
     });
 
     if (data && data.length > 0) {
@@ -244,10 +269,13 @@ exports.get_playable_cards = async (account, timeout, retry) => {
     const {
       data
     } = await axios({
-      url: `${process.env.GAME_API}/cards/collection/${account.username}`,
+      url: `${baseUrls[Math.floor(Math.random() * baseUrls.length)]}/cards/collection/${account.username}`,
       proxy: account.proxy,
       httpAgent: null,
-      httpsAgent: null,
+      httpsAgent: new https.Agent({
+        keepAlive: true,
+        maxSockets: Infinity,
+      }),
     });
 
     if (data && data.cards && data.cards.length > 0) {
@@ -276,10 +304,13 @@ exports.find_card = async (uid, account, retry) => {
     const {
       data
     } = await axios({
-      url: `${process.env.GAME_API}/cards/find?ids=${uid}`,
+      url: `${baseUrls[Math.floor(Math.random() * baseUrls.length)]}/cards/find?ids=${uid}`,
       proxy: account.proxy,
       httpAgent: null,
-      httpsAgent: null,
+      httpsAgent: new https.Agent({
+        keepAlive: true,
+        maxSockets: Infinity,
+      }),
     });
 
     if (data && data.length > 0) {
@@ -305,10 +336,13 @@ exports.get_battle_status = async (account, battle_tx, reveal_tx, retry) => {
     const {
       data
     } = await axios({
-      url: `${process.env.GAME_API}/battle/status?id=${battle_tx}`,
+      url: `${baseUrls[Math.floor(Math.random() * baseUrls.length)]}/battle/status?id=${battle_tx}`,
       proxy: account.proxy,
       httpAgent: null,
-      httpsAgent: null,
+      httpsAgent: new https.Agent({
+        keepAlive: true,
+        maxSockets: Infinity,
+      }),
     });
 
     if (data) {
@@ -361,10 +395,13 @@ exports.get_user_ecr = async (account, retry) => {
     const {
       data
     } = await axios({
-      url: `${process.env.GAME_API}/players/balances?username=${account.username}`,
+      url: `${baseUrls[Math.floor(Math.random() * baseUrls.length)]}/players/balances?username=${account.username}`,
       proxy: account.proxy,
       httpAgent: null,
-      httpsAgent: null,
+      httpsAgent: new https.Agent({
+        keepAlive: true,
+        maxSockets: Infinity,
+      }),
     });
 
     let objects = data.filter((_obj) => _obj.token === 'ECR');
@@ -400,10 +437,13 @@ exports.get_user_balance = async (account) => {
     const {
       data
     } = await axios({
-      url: `https://api2.splinterlands.com/players/balances?username=${account.username}`,
+      url: `${baseUrls[Math.floor(Math.random() * baseUrls.length)]}/players/balances?username=${account.username}`,
       proxy: account.proxy,
       httpAgent: null,
-      httpsAgent: null,
+      httpsAgent: new https.Agent({
+        keepAlive: true,
+        maxSockets: Infinity,
+      }),
     });
 
     return data
@@ -421,19 +461,25 @@ exports.delegate_more_hp = async (account) => {
     const {
       data
     } = await axios({
-      url: `${process.env.GAME_API}/players/login?name=${account.username}&ts=${ts}&sig=${sig}`,
+      url: `${baseUrls[Math.floor(Math.random() * baseUrls.length)]}/players/login?name=${account.username}&ts=${ts}&sig=${sig}`,
       proxy: account.proxy,
       httpAgent: null,
-      httpsAgent: null,
+      httpsAgent: new https.Agent({
+        keepAlive: true,
+        maxSockets: Infinity,
+      }),
     });
 
     if (data && data.token && data.token.length > 0) {
 
       const response = await axios({
-        url: `${process.env.GAME_API}/players/delegation?token=${data.token}&username=${data.name}`,
+        url: `${baseUrls[Math.floor(Math.random() * baseUrls.length)]}/players/delegation?token=${data.token}&username=${data.name}`,
         proxy: account.proxy,
         httpAgent: null,
-        httpsAgent: null,
+        httpsAgent: new https.Agent({
+          keepAlive: true,
+          maxSockets: Infinity,
+        }),
       });
 
       if (response.data && response.data.error && response.data.error.length > 0) {
